@@ -1,0 +1,11 @@
+{
+  "name": "ai-infra",
+  "version": "1.0.0",
+  "description": "AI infrastructure scripts and templates",
+  "scripts": {
+    "skill:create": "node scripts/skill/generate.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10"
+  }
+}

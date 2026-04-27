@@ -3,7 +3,7 @@ name: npm-workspace
 description: npm workspace技能，详解monorepo项目管理，包含工作区配置、依赖管理、常用命令及最佳实践，适用于多包项目管理场景。
 metadata:
   version: 1.0.0
-  author: ai-infra
+  author: wangsz04
 ---
 
 # npm-workspace
@@ -30,9 +30,7 @@ my-monorepo/
 ```json
 {
   "name": "my-monorepo",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "private": true
 }
 ```
@@ -76,15 +74,15 @@ npm install -D typescript -w packages/pkg1
 
 ## 常用命令
 
-| 命令 | 说明 |
-|------|------|
-| `npm install` | 安装所有工作区依赖 |
-| `npm install -w <pkg>` | 为指定工作区安装 |
-| `npm install -ws` | 为所有工作区安装 |
+| 命令                        | 说明                 |
+| --------------------------- | -------------------- |
+| `npm install`               | 安装所有工作区依赖   |
+| `npm install -w <pkg>`      | 为指定工作区安装     |
+| `npm install -ws`           | 为所有工作区安装     |
 | `npm run -w <pkg> <script>` | 在指定工作区运行脚本 |
-| `npm run -ws` | 在所有工作区运行脚本 |
-| `npm ls` | 查看依赖树 |
-| `npm clean -w <pkg>` | 清理指定工作区 |
+| `npm run -ws`               | 在所有工作区运行脚本 |
+| `npm ls`                    | 查看依赖树           |
+| `npm clean -w <pkg>`        | 清理指定工作区       |
 
 ## 脚本执行
 
