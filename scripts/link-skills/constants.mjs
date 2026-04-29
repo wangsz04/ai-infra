@@ -1,10 +1,10 @@
 /**
  * 常量定义：agent 预设、技能清单、项目路径
  */
-import path from 'node:path'
+import path from 'node:path';
 
 /** 项目根目录 */
-export const ROOT = path.resolve(import.meta.dirname, '..', '..')
+export const ROOT = path.resolve(import.meta.dirname, '..', '..');
 
 /**
  * 链接策略
@@ -51,7 +51,7 @@ export const AGENTS = {
   //   strategy: 'manual',
   //   desc: 'Cursor .mdc rules',
   // },
-}
+};
 
 /**
  * 技能条目，对应 skills/<category>/<name>/ 目录
@@ -67,4 +67,5 @@ export const AGENTS = {
  */
 export const SKILLS = [
   { category: 'agent', name: 'skill-create' },
-]
+  { category: 'agent', name: 'git-worktree-workflow' },
+];
