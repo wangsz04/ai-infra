@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "chrome-devtools-mcp": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--browser-url=http://127.0.0.1:9222"]
+    },
+    "figma-developer-mcp": {
+      "type": "local",
+      "command": ["npx", "-y", "figma-developer-mcp", "--figma-api-key={env:FIGMA_KEY}", "--stdio"]
+    },
+    "d2c-sloth-mcp": {
+      "type": "local",
+      "command": ["sloth", "--stdio"]
+    }
+  },
+  "permission": {
+    "skill": {}
+  },
+  "tools": {
+    "chrome-devtools-mcp": false,
+    "figma-developer-mcp": false,
+    "netease-popo-mcp": false,
+    "d2c-sloth-mcp": false
+  },
+  "agent": {}
+}
