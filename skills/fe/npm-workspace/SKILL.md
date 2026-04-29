@@ -1,159 +1,143 @@
 ---
 name: npm-workspace
-description: npm workspace技能，详解monorepo项目管理，包含工作区配置、依赖管理、常用命令及最佳实践，适用于多包项目管理场景。
-metadata:
-  version: 1.0.0
-  author: wangsz04
+description: 用于创建和管理npm workspace的技能，将子包放在packages/目录下，并在根包package.json中引用子包的重要scripts（构建、开发服务、执行命令等）
 ---
 
 # npm-workspace
 
-npm workspace 是 npm 7+ 引入的原生 monorepo 解决方案，用于在单个根目录 下管理多个子包。
+## 概述
 
-## 核心概念
+npm workspace 是 npm 7+ 提供的特性，允许在单个根包下管理多个子包。
 
-### 工作区结构
+## 目录结构
 
 ```
-my-monorepo/
-├── package.json          # 根workspace配置
-├── packages/
-│   ├── pkg1/
+project/
+├── packages/              # 所有子包放在此目录
+│   ├── pkg-a/
 │   │   └── package.json
-│   └── pkg2/
+│   └── pkg-b/
 │       └── package.json
-└── node_modules/         # 自动提升的依赖
+├── package.json           # 根包，引用子包scripts
+└── ...
 ```
 
-### 根 package.json 配置
+## 初始化
+
+### 1. 创建根包
+
+```json
+{
+  "name": "my-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces"
+  }
+}
+```
+
+### 2. 创建子包
+
+```json
+{
+  "name": "@my-workspace/pkg-a",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  }
+}
+```
+
+## 引用子包 Scripts
+
+根包通过 `npm run <script> --workspaces` 或 `npm run <script> --workspace=<pkg>` 执行子包命令：
+
+| 根包命令 | 子包执行 |
+|---------|---------|
+| `npm run dev --workspaces` | 所有子包执行 dev |
+| `npm run dev --workspace=@my-workspace/pkg-a` | 仅 pkg-a 执行 dev |
+
+## 常用命令
+
+```bash
+# 安装依赖（自动链接workspace）
+npm install
+
+# 所有子包执行命令
+npm run <script> --workspaces
+
+# 指定子包执行命令
+npm run <script> --workspace=@my-workspace/pkg-a
+
+# 添加依赖到指定子包
+npm install <pkg> -w @my-workspace/pkg-a
+```
+
+## 示例
+
+### 根 package.json
 
 ```json
 {
   "name": "my-monorepo",
-  "workspaces": ["packages/*"],
-  "private": true
-}
-```
-
-- `workspaces`: 数组，支持 glob 模式（如 `packages/*`、`packages/@*`）
-- `private`: 根包建议设为 `true`，防止意外发布
-
-## 依赖管理
-
-### 添加依赖
-
-```bash
-# 为指定工作区添加依赖
-npm install lodash -w packages/pkg1
-
-# 为所有工作区添加依赖
-npm install lodash -ws
-
-# 为开发依赖添加
-npm install -D typescript -w packages/pkg1
-```
-
-### 依赖提升规则
-
-- npm 会自动将所有工作区的依赖提升到根目录 `node_modules`
-- 同一依赖只保留最高版本，避免重复安装
-- 可通过 `npm ls <pkg>` 查看依赖树
-
-### 链接本地包
-
-工作区内的包可以直接相互引用，npm 会自动链接：
-
-```json
-// packages/pkg2/package.json
-{
-  "dependencies": {
-    "pkg1": "^1.0.0"
-  }
-}
-```
-
-## 常用命令
-
-| 命令                        | 说明                 |
-| --------------------------- | -------------------- |
-| `npm install`               | 安装所有工作区依赖   |
-| `npm install -w <pkg>`      | 为指定工作区安装     |
-| `npm install -ws`           | 为所有工作区安装     |
-| `npm run -w <pkg> <script>` | 在指定工作区运行脚本 |
-| `npm run -ws`               | 在所有工作区运行脚本 |
-| `npm ls`                    | 查看依赖树           |
-| `npm clean -w <pkg>`        | 清理指定工作区       |
-
-## 脚本执行
-
-### 单工作区执行
-
-```bash
-npm run build -w packages/pkg1
-npm test -w packages/pkg1
-```
-
-### 批量执行
-
-```bash
-# 所有工作区并行执行
-npm run build -ws
-
-# 过滤执行（需 npm 8+）
-npm run build -ws --workspace=packages/pkg1
-```
-
-## 最佳实践
-
-### 1. 依赖管理
-
-- 共享依赖放在根目录，减少安装时间和磁盘占用
-- 避免在不同工作区安装同一依赖的不同版本
-- 使用 `-w` 明确指定目标工作区
-
-### 2. 脚本设计
-
-```json
-// 根package.json
-{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "npm run build -ws",
-    "test": "npm run test -ws",
-    "clean": "npm run clean -ws"
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "clean": "npm run clean --workspaces",
+    "lint": "npm run lint --workspaces"
   }
 }
 ```
 
-### 3. 发布配置
+### 子包 package.json (pkg-a)
 
 ```json
-// packages/pkg1/package.json
 {
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://npm.example.com"
+  "name": "@my-monorepo/pkg-a",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "tsc && vite build",
+    "clean": "rm -rf dist",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "vue": "^3.4.0"
   }
 }
 ```
 
-### 4. 类型定义
+### 子包 package.json (pkg-b)
 
-- 共享类型应放在独立的工作区（如 `@my-org/types`）
-- 避免循环依赖
-
-## 常见问题
-
-### Q: 如何排除某个目录不作为工作区？
-
-在对应目录的 package.json 添加 `"private": true` 和空数组 workspaces 即可。
-
-### Q: 如何查看工作区列表？
-
-```bash
-npm query ':root > workspace'
+```json
+{
+  "name": "@my-monorepo/pkg-b",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --port 3002",
+    "build": "tsc && vite build",
+    "clean": "rm -rf dist",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  }
+}
 ```
 
-## 参考资料
+## 依赖提升
 
-- [npm workspaces 官方文档](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
-- [npm workspaces 博客介绍](https://github.blog/2021-07-27-npm-workspaces-redux/)
+默认情况下，workspace 的依赖会提升到根目录的 `node_modules`。如需单独安装，可使用 `-w` flag：
+
+```bash
+npm install -w @my-monorepo/pkg-a <package>
+```
