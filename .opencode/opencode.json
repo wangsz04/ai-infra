@@ -3,25 +3,19 @@
   "mcp": {
     "chrome-devtools-mcp": {
       "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--browser-url=http://127.0.0.1:9222"]
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--browser-url=http://127.0.0.1:9222"],
+      "enabled": false
     },
     "figma-developer-mcp": {
       "type": "local",
-      "command": ["npx", "-y", "figma-developer-mcp", "--figma-api-key={env:FIGMA_KEY}", "--stdio"]
+      "command": ["npx", "-y", "figma-developer-mcp", "--figma-api-key={env:FIGMA_KEY}", "--stdio"],
+      "enabled": false
     },
     "d2c-sloth-mcp": {
       "type": "local",
-      "command": ["sloth", "--stdio"]
+      "command": ["sloth", "--stdio"],
+      "enabled": false
     }
-  },
-  "permission": {
-    "skill": {}
-  },
-  "tools": {
-    "chrome-devtools-mcp": false,
-    "figma-developer-mcp": false,
-    "netease-popo-mcp": false,
-    "d2c-sloth-mcp": false
   },
   "agent": {}
 }
