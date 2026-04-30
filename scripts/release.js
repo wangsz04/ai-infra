@@ -4,6 +4,7 @@ import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import pc from 'picocolors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,6 +27,15 @@ if (!isBumpType && !isExactVersion) {
   process.exit(1);
 }
 
+const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
+
+if (currentBranch !== 'main') {
+  console.error(pc.red(`错误: 当前分支 ${pc.cyan(currentBranch)} 不是 ${pc.cyan('main')} 分支，请在 GitHub 上创建 PR 到 main，合并后再发布`));
+  process.exit(1);
+}
+
+console.log(pc.cyan(`当前分支: ${currentBranch}，正在发布...`));
+
 try {
   execSync('git diff --quiet', { stdio: 'pipe' });
 } catch {
@@ -47,4 +57,4 @@ console.log('正在推送 commit 和 tag...');
 execSync('git push --follow-tags', { stdio: 'inherit' });
 
 const updatedPkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'));
-console.log(`\n✓ v${updatedPkg.version} 已推送，GitHub workflow 将自动发布`);
+console.log(`\n${pc.green(`✓ v${updatedPkg.version} 已推送`)}，GitHub workflow 将自动发布`);
