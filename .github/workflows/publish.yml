@@ -29,6 +29,6 @@ jobs:
           echo "Version $PKG_VER OK"
 
       - name: npm publish
-        run: npm publish --access public
+        run: npm publish --access public --provenance
         env:
-          NPM_TOKEN: ${{ secrets.WANGSZ04_NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.WANGSZ04_NPM_TOKEN }}
