@@ -41,7 +41,7 @@ try {
 }
 
 console.log(`正在创建版本: ${bump}...`);
-execSync(`npm version ${bump} -m "chore: release v%s" --no-commit-hooks`, { stdio: 'inherit' });
+execSync(`npm version ${bump} -m "chore: release v%s"`, { stdio: 'inherit', env: { ...process.env, HUSKY: '0' } });
 
 console.log('正在推送 commit 和 tag...');
 execSync('git push --follow-tags', { stdio: 'inherit' });
