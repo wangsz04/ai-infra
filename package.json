@@ -18,7 +18,6 @@
     "cz:retry": "cz --retry",
     "prepare": "husky",
     "link-skills": "node scripts/link-skills --agent opencode",
-    "postinstall": "node scripts/link-skills --agent opencode --yes",
     "check-version": "node scripts/check-version.js",
     "release": "node scripts/release.js"
   },
