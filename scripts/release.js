@@ -41,10 +41,10 @@ try {
 }
 
 console.log(`正在创建版本: ${bump}...`);
-execSync(`npm version ${bump} -m "chore: release v%s"`, { stdio: 'inherit' });
+execSync(`npm version ${bump} -m "chore: release v%s" --no-commit-hooks`, { stdio: 'inherit' });
 
 console.log('正在推送 commit 和 tag...');
 execSync('git push --follow-tags', { stdio: 'inherit' });
 
-const version = packageJson.version;
-console.log(`\n✓ v${version} 已推送，GitHub workflow 将自动发布`);
+const updatedPkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'));
+console.log(`\n✓ v${updatedPkg.version} 已推送，GitHub workflow 将自动发布`);
