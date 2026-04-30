@@ -2,12 +2,34 @@
   "name": "@wangsz04/ai-infra",
   "version": "1.0.0",
   "description": "AI infrastructure scripts and templates",
+  "type": "module",
+  "main": "src/cli/index.js",
+  "bin": {
+    "wangsz-ai": "src/cli/index.js"
+  },
+  "files": [
+    "src/",
+    "skills/",
+    "rules/",
+    ".npmrc"
+  ],
   "scripts": {
     "cz": "cz",
     "cz:retry": "cz --retry",
     "prepare": "husky",
     "link-skills": "node scripts/link-skills --agent opencode",
-    "postinstall": "node scripts/link-skills --agent opencode --yes"
+    "postinstall": "node scripts/link-skills --agent opencode --yes",
+    "check-version": "node scripts/check-version.js",
+    "release": "node scripts/release.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangsz04/ai-infra.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.2",
@@ -15,13 +37,5 @@
     "@commitlint/cz-commitlint": "^20.5.2",
     "commitizen": "^4.3.1",
     "husky": "^9.1.7"
-  },
-  "type": "module",
-  "bin": {
-    "wangsz-ai": "src/cli/index.js"
-  },
-  "dependencies": {
-    "@clack/prompts": "^0.7.0",
-    "picocolors": "^1.1.1"
   }
 }
