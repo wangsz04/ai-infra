@@ -24,10 +24,10 @@ import pc from 'picocolors'
 /**
  * Copy resource files to target directories.
  * @param {InjectionItem[]} items
- * @param {{ dryRun: boolean, yes: boolean, targetDir: string }} options
+ * @param {{ dryRun: boolean, yes: boolean }} options
  * @returns {CopyResult[]}
  */
-export function copyFiles(items, { dryRun, yes, targetDir }) {
+export function copyFiles(items, { dryRun, yes }) {
   /** @type {CopyResult[]} */
   const results = []
   for (const item of items) {

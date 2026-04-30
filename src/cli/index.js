@@ -2,11 +2,27 @@
 
 import pc from 'picocolors';
 import { parseArgs, printHelp } from './parse-args.js';
-import { detectAgents } from '../agents/detect.js';
 import { AGENTS } from '../agents/constants.js';
 import { scanResources } from '../resources/scan.js';
+import { selectAgents } from '../ui/select-agents.js';
 import { selectResources } from '../ui/select.js';
 import path from 'node:path';
+
+/**
+ * @param {import('../agents/constants.js').AgentPreset} agent
+ * @returns {Object<string, string>}
+ */
+function resolveDirs(agent) {
+  if (agent.dirs) {
+    const result = {};
+    for (const [type, dir] of Object.entries(agent.dirs)) {
+      result[type] = path.resolve(process.cwd(), dir);
+    }
+    return result;
+  }
+  const fallback = path.resolve(process.cwd(), agent.dir);
+  return { skill: fallback, rule: fallback };
+}
 
 async function main() {
   const args = parseArgs();
@@ -16,26 +32,18 @@ async function main() {
     return;
   }
 
-  const agentKeys = detectAgents(args.agent);
+  const autoYes = args.yes || args.dryRun;
 
-  if (agentKeys.length === 0) {
-    console.log(pc.yellow('No supported AI agent detected in this directory.'));
-    console.log(pc.gray('Use --agent <name> to specify one manually:'));
-    for (const [key, preset] of Object.entries(AGENTS)) {
-      console.log(pc.gray(`  --agent ${key}  → ${preset.dir}`));
+  let agentKeys;
+  if (args.agent) {
+    if (!AGENTS[args.agent]) {
+      console.error(pc.red(`Error: Unknown agent "${args.agent}". Available: ${Object.keys(AGENTS).join(', ')}`));
+      process.exit(1);
     }
-    process.exit(0);
+    agentKeys = [args.agent];
+  } else {
+    agentKeys = await selectAgents(Object.keys(AGENTS), autoYes);
   }
-
-  if (agentKeys.length > 1) {
-    console.log(pc.yellow('Multiple agents detected. Select one:'));
-    agentKeys.forEach((k) => console.log(pc.gray(`  --agent ${k}  → ${AGENTS[k].dir}`)));
-    process.exit(0);
-  }
-
-  const agentKey = agentKeys[0];
-  const agent = AGENTS[agentKey];
-  const targetDir = path.resolve(process.cwd(), agent.dir);
 
   const availableResources = scanResources();
 
@@ -44,7 +52,9 @@ async function main() {
     return;
   }
 
-  const items = await selectResources(availableResources, agent.label, targetDir, args.yes || args.dryRun);
+  const firstAgent = AGENTS[agentKeys[0]];
+  const firstDirs = resolveDirs(firstAgent);
+  const items = await selectResources(availableResources, firstAgent.label, firstDirs, autoYes);
 
   let copyFiles;
   let printSummary;
@@ -61,19 +71,43 @@ async function main() {
     console.log(pc.yellow('Summary module not available.'));
   }
 
-  if (copyFiles) {
-    const results = copyFiles(items, { dryRun: args.dryRun, yes: args.yes, targetDir });
-    if (printSummary) {
-      printSummary(results, agent.label);
+  let hasError = false;
+
+  for (const agentKey of agentKeys) {
+    const agent = AGENTS[agentKey];
+    const dirs = resolveDirs(agent);
+    const agentItems = items.map((item) => {
+      const targetDir = dirs[item.type] || dirs['skill'];
+      const baseName = item.type === 'rule' ? item.name + '.md' : item.name;
+      return {
+        ...item,
+        targetPath: path.join(targetDir, baseName),
+      };
+    });
+
+    if (copyFiles) {
+      try {
+        const results = copyFiles(agentItems, { dryRun: args.dryRun, yes: args.yes });
+        if (printSummary) {
+          printSummary(results, agent.label);
+        }
+        if (results.some((r) => r.status === 'error')) {
+          hasError = true;
+        }
+      } catch (err) {
+        console.error(pc.red(`Error injecting into ${agent.label}: ${err.message}`));
+        hasError = true;
+      }
+    } else {
+      console.log(pc.gray(`Selected resources for ${agent.label}:`));
+      for (const item of agentItems) {
+        console.log(pc.gray(`  ${item.type}/${item.category}/${item.name} → ${item.targetPath}`));
+      }
     }
-    if (results.some((r) => r.status === 'error')) {
-      process.exit(1);
-    }
-  } else {
-    console.log(pc.gray('Selected resources (injection engine not yet available):'));
-    for (const item of items) {
-      console.log(pc.gray(`  ${item.type}/${item.category}/${item.name} → ${item.targetPath}`));
-    }
+  }
+
+  if (hasError) {
+    process.exit(1);
   }
 }
 
