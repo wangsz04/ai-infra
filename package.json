@@ -19,7 +19,8 @@
     "prepare": "husky",
     "link-skills": "node scripts/link-skills --agent opencode",
     "check-version": "node scripts/check-version.js",
-    "release": "node scripts/release.js"
+    "release": "node scripts/release.js",
+    "dev:cli": "node --inspect --watch src/cli/index.js"
   },
   "repository": {
     "type": "git",

@@ -1,17 +1,21 @@
+/** @import { AgentKey } from '@/agents/constants.js' */
+
 import pc from 'picocolors';
 import { AGENTS } from '../agents/constants.js';
+import { intro, outro, multiselect, isCancel } from '@clack/prompts'
 
 /**
- * @param {string[]} agentKeys
+ * @param {readonly AgentKey[]} agentKeys
  * @param {boolean} autoYes
- * @returns {Promise<string[]>}
+ * @returns {Promise<AgentKey[]>}
  */
 export async function selectAgents(agentKeys, autoYes) {
+  /** @type {AgentKey[]} */
+  let ret = []
   if (autoYes) {
-    return agentKeys;
+    ret = [...agentKeys]
+    return ret;
   }
-
-  const { intro, outro, multiselect, isCancel } = await import('@clack/prompts');
 
   intro(pc.bold(pc.cyan('Select target AI agents')));
 
@@ -32,9 +36,9 @@ export async function selectAgents(agentKeys, autoYes) {
     process.exit(0);
   }
 
-  const keys = /** @type {string[]} */ (selected);
+  ret = /** @type {AgentKey[]} */ (selected);
 
-  outro(pc.green(`Selected ${keys.length} agent(s)`));
+  outro(pc.green(`Selected ${ret.length} agent(s)`));
 
-  return keys;
+  return ret;
 }

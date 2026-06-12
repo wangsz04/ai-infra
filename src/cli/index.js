@@ -1,16 +1,17 @@
 #!/usr/bin/env node
+/** @import {AgentPreset, AgentKey} from '@/agents/constants.js' */
 
 import pc from 'picocolors';
 import { parseArgs, printHelp } from './parse-args.js';
-import { AGENTS } from '../agents/constants.js';
+import { AGENTS, SUPPORTED_AGENTS } from '../agents/constants.js';
 import { scanResources } from '../resources/scan.js';
 import { selectAgents } from '../ui/select-agents.js';
 import { selectResources } from '../ui/select.js';
 import path from 'node:path';
 
 /**
- * @param {import('../agents/constants.js').AgentPreset} agent
- * @returns {Object<string, string>}
+ * @param {AgentPreset} agent
+ * @returns {Record<string, string>}
  */
 function resolveDirs(agent) {
   if (agent.dirs) {
@@ -24,6 +25,14 @@ function resolveDirs(agent) {
   return { skill: fallback, rule: fallback };
 }
 
+/**
+ * @param {string} key
+ * @returns {key is AgentKey}
+ */
+function isAgentKey(key) {
+  return SUPPORTED_AGENTS.some((k) => k === key);
+}
+
 async function main() {
   const args = parseArgs();
 
@@ -34,15 +43,20 @@ async function main() {
 
   const autoYes = args.yes || args.dryRun;
 
-  let agentKeys;
+  /** @type {AgentKey[]} */
+  const agentKeys = [];
   if (args.agent) {
-    if (!AGENTS[args.agent]) {
+    // User manually passed arg agent
+    if (!isAgentKey(args.agent)) {
       console.error(pc.red(`Error: Unknown agent "${args.agent}". Available: ${Object.keys(AGENTS).join(', ')}`));
       process.exit(1);
     }
-    agentKeys = [args.agent];
+    agentKeys.push(args.agent)
   } else {
-    agentKeys = await selectAgents(Object.keys(AGENTS), autoYes);
+    // User not manually passed arg agent
+    // display cli to select asynchronous
+    const selectedAgents = await selectAgents(SUPPORTED_AGENTS, autoYes);
+    agentKeys.push(...selectedAgents);
   }
 
   const availableResources = scanResources();

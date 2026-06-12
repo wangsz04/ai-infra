@@ -4,25 +4,41 @@ import { AGENTS } from '../agents/constants.js';
 /**
  * @typedef {Object} ParsedArgs
  * @property {string} [agent]
- * @property {boolean} dryRun
+ * @property {boolean} dryRun - 纯运行标志
  * @property {boolean} yes
- * @property {boolean} help
+ * @property {boolean} help - 帮助
  */
 
-/** @returns {ParsedArgs} */
+/** 程序参数标志 */
+const ARGS = {
+  /** agent 参数标志 */
+  AGENTS: ['--agent', '-a'],
+  /** 纯运行参数标志 */
+  DRY_RUN: ['--dry-run'],
+  /** 确认标志 */
+  YES: ['--yes', '-y'],
+  /** 帮助信息标志 */
+  HELP: ['--help', '-h']
+}
+
+
+/** 
+ * 解析程序参数
+ * @returns {ParsedArgs}
+ */
 export function parseArgs() {
   const argv = process.argv.slice(2);
   /** @type {ParsedArgs} */
   const args = { dryRun: false, yes: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === '--agent' || arg === '-a') {
+    if (ARGS.AGENTS.includes(arg)) {
       args.agent = argv[++i];
-    } else if (arg === '--dry-run') {
+    } else if (ARGS.DRY_RUN.includes(arg)) {
       args.dryRun = true;
-    } else if (arg === '--yes') {
+    } else if (ARGS.YES.includes(arg)) {
       args.yes = true;
-    } else if (arg === '--help' || arg === '-h') {
+    } else if (ARGS.HELP.includes(arg)) {
       args.help = true;
     }
   }
@@ -41,7 +57,7 @@ ${pc.bold('Usage:')}
 ${pc.bold('Options:')}
   -a, --agent <name>   Skip detection and use a specific agent
   --dry-run            Preview changes without executing
-  --yes                Skip all confirmation prompts
+  -y, --yes            Skip all confirmation prompts
   -h, --help           Show this help message
 
 ${pc.bold('Supported agents:')}
