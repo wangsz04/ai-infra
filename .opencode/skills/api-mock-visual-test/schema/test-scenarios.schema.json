@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Scenarios Configuration",
+  "description": "API Mock Visual Test 测试场景配置格式定义",
+  "type": "object",
+  "required": ["version", "scenarios"],
+  "properties": {
+    "version": { "type": "string", "description": "配置格式版本号" },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "项目名称" },
+        "baseUrl": { "type": "string", "format": "uri", "description": "测试环境地址" },
+        "figma": { "type": "string", "format": "uri", "description": "全局默认 Figma 文件链接" }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "properties": {
+        "web": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "object",
+              "properties": {
+                "width": { "type": "integer" },
+                "height": { "type": "integer" }
+              }
+            },
+            "deviceScaleFactor": { "type": "number" }
+          }
+        },
+        "miniprogram": {
+          "type": "object",
+          "properties": {
+            "platform": { "enum": ["wechat", "alipay", "bytedance"] },
+            "projectPath": { "type": "string" }
+          }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Scenario" }
+    }
+  },
+  "definitions": {
+    "Scenario": {
+      "type": "object",
+      "required": ["name", "steps"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "figma": { "type": "string", "format": "uri" },
+        "isolated": { "type": "boolean", "default": false },
+        "mock": { "type": "array", "items": { "$ref": "#/definitions/Mock" } },
+        "setup": { "type": "array", "items": { "$ref": "#/definitions/Step" } },
+        "steps": { "type": "array", "items": { "$ref": "#/definitions/Step" } }
+      }
+    },
+    "Mock": {
+      "type": "object",
+      "required": ["url", "method", "response"],
+      "properties": {
+        "url": { "type": "string" },
+        "method": { "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"] },
+        "status": { "type": "integer", "default": 200 },
+        "delay": { "type": "integer", "default": 0 },
+        "response": {},
+        "description": { "type": "string" },
+        "times": { "type": "integer" }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "required": ["action"],
+      "properties": {
+        "action": {
+          "enum": ["navigate", "wait", "click", "fill", "select", "hover", "scroll", "pressKey", "upload", "screenshot", "assert", "evaluate", "pause"]
+        },
+        "description": { "type": "string" },
+        "url": { "type": "string" },
+        "target": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "object", "properties": { "selector": { "type": "string" }, "text": { "type": "string" }, "role": { "type": "string" }, "name": { "type": "string" } } }
+          ]
+        },
+        "timeout": { "type": "integer" },
+        "value": { "type": "string" },
+        "values": { "type": "array", "items": { "type": "string" } },
+        "key": { "type": "string" },
+        "filePath": { "type": "string" },
+        "script": { "type": "string" },
+        "message": { "type": "string" },
+        "direction": { "enum": ["up", "down", "left", "right"] },
+        "distance": { "type": "integer" },
+        "compare": { "type": "array", "items": { "$ref": "#/definitions/Compare" } },
+        "expect": { "type": "string" },
+        "type": { "enum": ["visible", "hidden", "text", "count", "attribute"] },
+        "stability": {
+          "type": "object",
+          "properties": {
+            "networkIdle": { "type": "boolean" },
+            "animationEnd": { "type": "boolean" },
+            "domStable": { "type": "boolean" },
+            "timeout": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "Compare": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["semantic", "figma", "baseline"] },
+        "expect": { "type": "string" },
+        "nodeId": { "type": "string" },
+        "tolerance": { "enum": ["low", "medium", "high"], "default": "medium" },
+        "baseline": { "type": "string" }
+      }
+    }
+  }
+}
