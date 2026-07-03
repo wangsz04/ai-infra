@@ -1,0 +1,59 @@
+# API Mock Visual Test - 测试场景配置模板
+# 将此文件复制到目标项目根目录，按实际情况填写
+#
+# 使用方式：
+#   1. 填写 project.name, project.baseUrl
+#   2. 填写 scenarios 下的各测试场景
+#   3. 运行: @test:run
+#
+# 字段说明见 SKILL.md 或 schema/test-scenarios.schema.json
+
+version: "1.0"
+
+project:
+  name: ""                                 # 项目名称（必填）
+  baseUrl: ""                              # 测试环境地址（必填）
+  figma: ""                                # Figma 文件链接（可选）
+
+targets:
+  web:
+    viewport:
+      width: 375
+      height: 812
+    deviceScaleFactor: 2
+
+scenarios:
+  # ─── 场景模板 ───
+  # - name: "场景名称"                      # 必填
+  #   description: "场景描述"               # 供 AI 和人工理解
+  #   tags: ["smoke"]                       # 标签，用于过滤执行
+  #   isolated: false                       # 是否独立页面执行
+  #   figma: ""                             # 场景默认 Figma 节点（可选）
+  #   mock:                                 # Mock 接口数据
+  #     - url: "/api/path"
+  #       method: GET
+  #       status: 200
+  #       delay: 0
+  #       description: "接口说明"
+  #       response:
+  #         code: 0
+  #         data: {}
+  #   setup:                                # 前置操作（可选）
+  #     - action: navigate
+  #       url: "/pages/index"
+  #   steps:                                # 操作+验证步骤（必填）
+  #     - action: navigate
+  #       url: "/pages/xxx"
+  #       description: "进入页面"
+  #     - action: wait
+  #       target: ".main-container"
+  #       timeout: 10000
+  #     - action: screenshot
+  #       description: "验证页面状态"
+  #       compare:
+  #         - type: semantic
+  #           expect: "描述预期看到的页面状态"
+  #         - type: figma
+  #           tolerance: medium
+  #         - type: baseline
+  #           baseline: "基线名称"
