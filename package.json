@@ -1,6 +1,6 @@
 {
   "name": "@wangsz04/ai-infra",
-  "version": "1.1.6-0",
+  "version": "0.0.1",
   "description": "AI infrastructure scripts and templates",
   "type": "module",
   "main": "src/cli/index.js",
@@ -19,7 +19,8 @@
     "prepare": "husky",
     "link-skills": "node scripts/link-skills --agent opencode",
     "check-version": "node scripts/check-version.js",
-    "release": "node scripts/release.js"
+    "release": "node scripts/release.js",
+    "dev:cli": "node --inspect --watch src/cli/index.js"
   },
   "repository": {
     "type": "git",

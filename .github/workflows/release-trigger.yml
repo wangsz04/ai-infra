@@ -1,0 +1,60 @@
+name: release-trigger
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 版本 bump 类型（默认 prepatch 为 beta 预发布）
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+        default: prepatch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Validate bump type
+        run: |
+          VALID_BUMPS="patch minor major prepatch preminor premajor prerelease"
+          if ! echo "$VALID_BUMPS" | tr ' ' '\n' | grep -qx "${{ inputs.bump }}"; then
+            echo "无效的 bump 类型: ${{ inputs.bump }}"
+            echo "可用值: $VALID_BUMPS"
+            exit 1
+          fi
+          echo "Bump 类型: ${{ inputs.bump }} OK"
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version and create tag
+        run: npm version ${{ inputs.bump }} -m "chore: release v%s"
+        env:
+          HUSKY: 0
+
+      - name: Push commit and tag
+        run: |
+          git push origin HEAD:main
+          TAG=$(git describe --tags --abbrev=0)
+          git push origin "$TAG"

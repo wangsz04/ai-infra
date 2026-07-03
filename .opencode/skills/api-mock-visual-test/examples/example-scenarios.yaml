@@ -1,0 +1,141 @@
+# API Mock Visual Test - 示例场景
+version: "1.0"
+project:
+  name: "示例项目"
+  baseUrl: "https://test.example.com"
+  figma: "https://www.figma.com/file/EXAMPLE"
+targets:
+  web:
+    viewport: { width: 375, height: 812 }
+    deviceScaleFactor: 2
+scenarios:
+  # ─── 例1：空状态 ───
+  - name: "奖励列表为空"
+    description: "接口返回空数据时展示空状态占位图"
+    tags: ["smoke", "empty"]
+    mock:
+      - url: "/api/reward/list"
+        method: GET
+        response: { code: 0, data: [] }
+        description: "返回空列表"
+    steps:
+      - action: navigate
+        url: "/pages/reward/index"
+      - action: wait
+        target: ".reward-container"
+        timeout: 10000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "页面显示空状态提示（如暂无奖励），不应显示奖励列表"
+
+  # ─── 例2：正常数据+交互 ───
+  - name: "正常奖励列表-点击领取"
+  description: "正常列表展示+点击领取按钮弹窗"
+    tags: ["smoke", "interaction"]
+    mock:
+      - url: "/api/reward/list"
+        method: GET
+        response:
+          code: 0
+          data:
+            items:
+              - { id: 1, name: "10元优惠券", type: "coupon", status: "available" }
+              - { id: 2, name: "限定皮肤", type: "skin", status: "claimed" }
+    steps:
+      - action: navigate
+        url: "/pages/reward/index"
+      - action: wait
+        target: ".reward-list"
+        timeout: 10000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "展示2条奖励，第1条有立即领取按钮，第2条显示已领取"
+      - action: click
+        target: "text=立即领取"
+      - action: wait
+        target: ".claim-dialog"
+        timeout: 5000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "弹出领取确认弹窗，展示奖励名称，包含确认和取消按钮"
+
+  # ─── 例3：错误码 ───
+  - name: "接口返回登录过期code=30000"
+    description: "接口返回需重新登录的错误码"
+    tags: ["error", "login"]
+    mock:
+      - url: "/api/reward/list"
+        method: GET
+        response: { code: 30000, msg: "登录已过期", data: null }
+    steps:
+      - action: navigate
+        url: "/pages/reward/index"
+      - action: wait
+        target: ".login-dialog"
+        timeout: 5000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "弹出登录过期提示或跳转登录页"
+
+  # ─── 例4：网络异常 ───
+  - name: "接口500服务器异常"
+    description: "接口返回500时展示错误页"
+    tags: ["error", "network"]
+    mock:
+      - url: "/api/reward/list"
+        method: GET
+        status: 500
+        response: { code: 500, msg: "服务器繁忙" }
+    steps:
+      - action: navigate
+        url: "/pages/reward/index"
+      - action: wait
+        target: ".error-container"
+        timeout: 10000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "展示网络异常提示（如网络异常请稍后重试），包含重试按钮"
+
+  # ─── 例5：多次接口调用 ───
+  - name: "先空列表再刷出数据"
+    description: "首次空列表，触发操作后重新请求返回数据"
+    tags: ["interaction", "refresh"]
+    mock:
+      - url: "/api/reward/list"
+        method: GET
+        response: { code: 0, data: [] }
+        times: 1
+        description: "第1次调用空列表"
+      - url: "/api/reward/list"
+        method: GET
+        response:
+          code: 0
+          data:
+            items:
+              - { id: 1, name: "新手礼包", type: "gift" }
+        times: 1
+        description: "第2次调用有数据"
+    steps:
+      - action: navigate
+        url: "/pages/reward/index"
+      - action: wait
+        target: ".empty-state"
+        timeout: 5000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "显示空状态提示"
+      - action: click
+        target: "text=刷新"
+      - action: wait
+        target: ".reward-item"
+        timeout: 5000
+      - action: screenshot
+        compare:
+          - type: semantic
+            expect: "显示新手礼包条目，空状态已消失"
