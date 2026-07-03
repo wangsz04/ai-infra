@@ -1,0 +1,19 @@
+.opencode/skills/api-mock-visual-test/SKILL.md
+  s_0892e5fe8b736b::t_6816389f1ccf50 1-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "2cc1b1c32f418c51829d4ce3b27ec1bd7144b8b7",
+  "prompts": {},
+  "sessions": {
+    "s_0892e5fe8b736b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d8c6fdebffeyPFsxT444LyNVM",
+        "model": "unknown"
+      },
+      "human_author": "wangsz <wangshenze@corp.netease.com>"
+    }
+  }
+}
