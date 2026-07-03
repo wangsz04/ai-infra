@@ -1,6 +1,6 @@
 ---
 name: git-worktree-workflow
-description: 基于 git worktree 实现多 agent 并行执行任务。当用户提及"并行"、"parallel"、"git worktree"、"同时执行多个任务"、"独立分支执行"等关键词时使用。指导 agent 在独立 worktree 中工作，避免污染当前分支，支持任务完成后合并、冲突处理和 worktree 清理。
+description: 基于 git worktree 实现多任务并行处理的工作流方案, 以实现任务隔离，避免分支污染。支持任务完成后合并、代码冲突处理与git worktree 清理等操作。当用户提及"并行任务"、"基于git worktree并行完成", "git worktree", "parallel"、"同时执行多个任务"、"独立分支执行"等关键词时使用。
 license: MIT
 compatibility: opencode
 metadata:
