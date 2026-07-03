@@ -1,0 +1,19 @@
+.opencode/skills/api-mock-visual-test/templates/test-scenarios.yaml
+  s_5c111955232749::t_0cb3d5dda9e851 1-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "7438915971eea5259ea23e99c7c3b2ab395a31d9",
+  "prompts": {},
+  "sessions": {
+    "s_5c111955232749": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d8c7f77fffeY6YWRN5lxBmMpR",
+        "model": "unknown"
+      },
+      "human_author": "wangsz <wangshenze@corp.netease.com>"
+    }
+  }
+}
