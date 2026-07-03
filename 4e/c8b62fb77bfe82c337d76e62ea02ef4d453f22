@@ -1,0 +1,33 @@
+.superpowers/sdd/progress.md
+  s_48554f3bf9c1e5::t_f1d0f1ba552078 1-3
+docs/superpowers/specs/2026-07-03-api-mock-visual-testing-design.md
+  s_48554f3bf9c1e5::t_56cda77533f12b 1-131,133,161-286,307-392,394-395,404-585
+  s_48554f3bf9c1e5::t_4d8561145b5d35 287-306
+  s_48554f3bf9c1e5::t_166dfc5d74923a 132,134-160
+  s_48554f3bf9c1e5::t_6181122d82f111 393,396-403
+docs/superpowers/plans/2026-07-03-api-mock-visual-test.md
+  s_48554f3bf9c1e5::t_7cafe811f4d546 221-303
+  s_48554f3bf9c1e5::t_728b1db822a6be 421-638
+  s_48554f3bf9c1e5::t_bdf5e3d9e4b6a1 19-55
+  s_48554f3bf9c1e5::t_6922b155a69797 304-420
+  s_48554f3bf9c1e5::t_33485eb9ee0386 1-18
+  s_48554f3bf9c1e5::t_669375cda9469c 56-220
+docs/superpowers/plans/progress.md
+  s_48554f3bf9c1e5::t_e9b398868a07dd 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4ec8b62fb77bfe82c337d76e62ea02ef4d453f22",
+  "prompts": {},
+  "sessions": {
+    "s_48554f3bf9c1e5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d8eae997ffeL4Gxz5qV5TQEVy",
+        "model": "unknown"
+      },
+      "human_author": "wangsz <wangshenze@corp.netease.com>"
+    }
+  }
+}
